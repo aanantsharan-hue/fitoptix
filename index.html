@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FITOPTIX — Read before you eat</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0f12;--card:#16181d;--ink:#e9e4d8;--mut:#8d8a80;--acc:#ffb000;--ok:#6fcf97;--bad:#ff5d4d;--line:#2a2c33;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0f12}}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f2eee3;--card:#fbf8f0;--ink:#1a1a1a;--mut:#6b675c;--acc:#a85f00;--ok:#1f7a45;--bad:#c0291a;--line:#d6cfbd;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#0e0f12}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 'IBM Plex Mono',ui-monospace,Menlo,monospace}
+main{max-width:980px;margin:0 auto;padding:18px 16px 60px}
+h1,h2{font-family:'Space Grotesk',system-ui,sans-serif;margin:0}
+h1{font-size:clamp(34px,8vw,64px);letter-spacing:-.02em;line-height:1}
+h1 sup{font-size:.35em}.tag{color:var(--acc);letter-spacing:.2em;font-size:12px;margin:6px 0 14px}
+.meta{color:var(--mut);font-size:11px;display:flex;flex-wrap:wrap;gap:4px 18px;border-bottom:1px dashed var(--line);padding-bottom:10px;margin-bottom:12px}
+.lead{max-width:70ch;color:var(--ink)}
+nav{display:flex;gap:6px;overflow-x:auto;margin:18px 0;border-bottom:1px solid var(--line);padding-bottom:8px}
+nav button{white-space:nowrap}
+button{font:inherit;cursor:pointer;background:transparent;color:var(--ink);border:1px solid var(--line);padding:7px 12px;border-radius:2px}
+button:hover,nav button.on{border-color:var(--acc);color:var(--acc)}
+button.pri{background:var(--acc);color:#000;border-color:var(--acc);font-weight:600}
+.sec{display:none}.sec.on{display:block}
+.sec h2{font-size:26px}.sec>p{color:var(--mut);margin:4px 0 14px}
+.card{background:var(--card);border:1px solid var(--line);padding:14px;margin:12px 0}
+label{display:block;font-size:11px;color:var(--mut);letter-spacing:.08em;margin:10px 0 4px}
+textarea,input,select{width:100%;font:inherit;background:var(--bg);color:var(--ink);border:1px solid var(--line);padding:8px;border-radius:2px}
+textarea{min-height:120px;resize:vertical}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.score{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.big{font:700 54px/1 'Space Grotesk',sans-serif}
+.chip{display:inline-block;border:1px solid var(--line);padding:1px 7px;margin:2px;font-size:12px}
+.l0{color:var(--ok)}.l1{color:var(--acc)}.l2{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:400}
+.scroll{overflow-x:auto}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+small,.mut{color:var(--mut)}
+footer{margin-top:40px;border-top:1px dashed var(--line);padding-top:14px;color:var(--mut);font-size:12px}
+</style><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet"><style>
+:root,:root:not([data-theme="light"]){--bg:#0b1220;--card:rgba(255,255,255,.05);--ink:#eef2f7;--mut:#94a3b8;--acc:#34d399;--ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--line:rgba(255,255,255,.1);--grad:linear-gradient(135deg,#34d399,#38bdf8);color-scheme:dark}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f7f5;--card:#fff;--ink:#0f172a;--mut:#5b6b7f;--acc:#059669;--ok:#059669;--warn:#b45309;--bad:#dc2626;--line:#e2e8f0;--grad:linear-gradient(135deg,#10b981,#0ea5e9);color-scheme:light}}
+body{font:15px/1.6 'Plus Jakarta Sans',system-ui,sans-serif;background:radial-gradient(900px 500px at 8% -8%,rgba(52,211,153,.18),transparent),radial-gradient(800px 460px at 100% 0,rgba(56,189,248,.15),transparent),var(--bg);background-attachment:fixed}
+.meta,#hero,#hero+.btns,#hero+.btns+small,#scanbox{display:none!important}
+h1{font-weight:800;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:4px}
+.tag{color:var(--mut);letter-spacing:.14em;font-size:11px}
+nav{border:0;gap:8px;padding:4px 0}
+nav button{border-radius:999px;padding:9px 16px;background:var(--card);font-weight:600}
+nav button.on{background:var(--grad);color:#04210f;border-color:transparent}
+button{border-radius:999px;font-family:inherit;font-weight:600}
+button.pri{background:var(--grad);color:#04210f;border:0}
+.card{border-radius:20px;padding:20px;box-shadow:0 12px 32px rgba(0,0,0,.14)}
+textarea,input,select{border-radius:12px;background:var(--card);padding:10px 12px}
+.sec h2{font-size:20px;font-weight:800}.l1{color:var(--warn)}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+th,td{border-bottom:1px solid var(--line)}
+.chip{border-radius:999px;padding:3px 10px;background:var(--card)}
+.scanhero{text-align:center;border-radius:28px;padding:28px 18px;margin-bottom:18px;background:linear-gradient(160deg,rgba(52,211,153,.16),rgba(56,189,248,.12));border:1px solid var(--line)}
+.scanhero h2{font-size:clamp(24px,6vw,36px);margin:6px 0}.scanhero p{color:var(--mut);margin:0 auto 16px;max-width:46ch}
+.sh-t{font-size:12px;letter-spacing:.2em;color:var(--acc);font-weight:800}
+.camBtn,.upBtn{display:inline-block;margin:5px;padding:14px 24px;border-radius:999px;font-weight:800;cursor:pointer}
+.camBtn{background:var(--grad);color:#04210f;font-size:17px;box-shadow:0 8px 24px rgba(52,211,153,.35)}
+.upBtn{border:1px solid var(--line);background:var(--card)}
+.sst{min-height:20px;margin:10px 0 0;color:var(--mut);font-size:13px}
+.vc{display:flex;gap:16px;text-align:left;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin-top:14px}
+.ve{font-size:56px;line-height:1}.vb{flex:1;min-width:0}.vt{font-size:26px;font-weight:800;line-height:1.2}
+.gauge{height:10px;border-radius:99px;background:var(--line);margin:10px 0;overflow:hidden}.gauge i{display:block;height:100%;border-radius:99px}
+.vb ul{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--mut)}
+.big{font-weight:800}
+main{max-width:720px;padding:20px 16px 120px}
+h1{font-size:30px;letter-spacing:-.02em}
+.meta+.tag{display:none}h1+.tag{margin:2px 0 14px;font-size:12px;letter-spacing:.04em}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:720px;z-index:20;margin:0;gap:0;justify-content:space-around;overflow:visible;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--bg);background:color-mix(in srgb,var(--bg) 85%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line);border-radius:22px 22px 0 0}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;border-radius:14px;font-size:11px;padding:6px 2px;color:var(--mut);white-space:normal}
+nav button .ic{font-size:22px;line-height:1.1}
+nav button.on{background:var(--card);color:var(--acc);border:0;box-shadow:inset 0 0 0 1px var(--line)}
+label{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--mut)}
+input,select,textarea{min-height:46px;font:inherit;border:1px solid var(--line)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);outline-offset:1px}
+.btns button{flex:1 1 auto;padding:12px 16px}
+.sec>h2{font-size:24px;letter-spacing:-.01em;margin:6px 0}
+.sec>p{margin:0 0 14px}
+#pout .row>div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+table tr:nth-child(even) td{background:rgba(127,127,127,.06)}
+footer{border:0;text-align:center}
+.vc{box-shadow:0 14px 36px rgba(0,0,0,.18)}.vt{font-size:28px}
+@media (prefers-reduced-motion:no-preference){.card,.vc,.scanhero{animation:up .4s ease both}}
+@keyframes up{from{opacity:0;transform:translateY(10px)}}
+.nf{background:#fff;color:#000;border:2px solid #000;border-radius:6px;padding:10px 12px;font-family:Helvetica,Arial,sans-serif;max-width:340px;margin:12px auto}
+.nf-h{font-size:34px;font-weight:900;line-height:1;letter-spacing:-1px}
+.nf-s{font-size:13px;border-bottom:8px solid #000;padding:4px 0 6px}
+.nf-cal{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:4px solid #000;padding:4px 0}
+.nf-cal span{font-size:22px;font-weight:900}.nf-cal b{font-size:38px;line-height:1}
+.nf-hd{text-align:right;font-weight:800;font-size:12px;border-bottom:1px solid #000;padding:3px 0}
+.nf-r{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #000;padding:4px 0;font-size:14px}
+.nf-f{font-size:11px;padding-top:6px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.pic{width:84px;height:84px;object-fit:cover;border-radius:14px;border:1px solid var(--line)}
+.shelf-h{display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 4px}.shelf-h h2{font-size:18px;margin:0}
+.shelf{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 14px;margin-bottom:8px}
+.pack{flex:0 0 120px;scroll-snap-align:start;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px 8px;text-align:center;color:var(--ink);font-weight:500;box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.bag{position:relative;height:130px;margin:0 6px 8px;background:linear-gradient(160deg,var(--c1),var(--c2));display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;clip-path:polygon(0 4%,10% 0,20% 4%,30% 0,40% 4%,50% 0,60% 4%,70% 0,80% 4%,90% 0,100% 4%,100% 96%,90% 100%,80% 96%,70% 100%,60% 96%,50% 100%,40% 96%,30% 100%,20% 96%,10% 100%,0 96%)}
+.bag::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,255,255,.35),transparent 35%,transparent 70%,rgba(0,0,0,.2))}
+.bag .em{font-size:38px;z-index:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.bag b{font-size:12px;z-index:1;line-height:1.2;padding:0 6px;text-shadow:0 1px 3px rgba(0,0,0,.55)}
+.pn{font-size:11px;color:var(--mut);line-height:1.3;min-height:28px}
+.sc{display:inline-block;font-weight:800;font-size:12px;padding:2px 10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);margin-top:4px}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;margin:12px 0}.wb{height:96px;background:var(--line);border-radius:10px;display:flex;align-items:flex-end;overflow:hidden}.wb i{display:block;width:100%;border-radius:10px}.wd b{font-size:12px;display:block}.wd.td small{color:var(--acc);font-weight:800}
+.wsc{display:flex;align-items:center;gap:14px}.wsc .big{font-size:48px}
+.pies{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;text-align:center}
+.donut{position:relative;width:128px;height:128px;border-radius:50%;margin:8px auto;display:grid;place-items:center}.donut::before{content:'';position:absolute;inset:28px;border-radius:50%;background:var(--bg)}
+.donut span{position:relative;z-index:1;font-weight:800;line-height:1.1;text-align:center}.donut small{display:block;font-weight:400;color:var(--mut);font-size:10px}
+.lg{display:flex;flex-wrap:wrap;gap:4px 10px;justify-content:center;font-size:11px}.lg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+.mb{margin:10px 0;font-size:13px}.mb .gauge{margin:4px 0}
+</style></head>
+<body><main>
+<div class="meta"><span>DOCUMENT REF: FTX-LAB-2026/089</span><span>BATCH NO: #IND-SPECIMEN-44B</span><span>PROCESSOR: LOCAL BROWSER SANDBOX</span><span>PLATE: NIGHT PRINT</span></div>
+<div class="tag">BIOCHEMICAL FOOD AUDIT &amp; NUTRITIONAL DOSSIER</div>
+<h1>FITOPTIX<sup>®</sup></h1>
+<div class="tag">READ BEFORE YOU EAT. // NON-CLINICAL EDUCATIONAL ENGINE</div>
+<nav id="nav"></nav>
+
+<p class="lead" id="hero"><b>LABORATORY SPECIFICATION // V2.6</b><br>Packaged food forensics &amp; metabolic nutrition planning. Deconstruct ingredient declarations, flag additives warranting review, estimate your basal metabolic expenditure and generate a five-meal Indian wholefood plan.</p>
+<div class="btns"><button class="pri" onclick="loadS('A');go(0)">LOAD NOODLES SAMPLE</button><button onclick="go(2)">SWITCH TO DIET PLANNER</button></div>
+<small>ENGINE STANDARDS: Mifflin-St Jeor (1990) • WHO Asian BMI guidance • FSSAI / Codex classes · DATA PRIVACY: audits run client-side with no telemetry; the optional photo scan sends your photo to Claude to read the text. · Educational review index — does not evaluate sterility, microbiology or manufacturing safety.</small>
+
+<section class="sec on" id="s0"><div class="scanhero"><div class="sh-t">FOOD SCANNER</div><h2>Is this food good for you?</h2><p>Snap the ingredient list on any packet and get a clear verdict in seconds.</p><label class="camBtn" for="lf2">📷 Scan with camera<input id="lf2" type="file" accept="image/*" capture="environment" hidden onchange="scanL2(this)"></label><label class="upBtn" for="lf3">🖼 Upload photo<input id="lf3" type="file" accept="image/*" hidden onchange="scanL2(this)"></label><div id="sst2" class="sst">Or pick a food or paste ingredients below.</div><div id="verd"></div></div><div class="shelf-h"><h2>Popular foods</h2><small>Tap a pack to audit it</small></div><div id="shelf" class="shelf"></div><h2>Label analysis</h2>
+<p>Parse the printed ingredient declaration, read INS / E-numbers and review against the local index.</p>
+<div class="card"><small>LOAD ILLUSTRATIVE SAMPLE (NON-BRAND):</small>
+<div class="btns"><button onclick="loadS('A')">A: Instant Noodles</button><button onclick="loadS('B')">B: Packaged Biscuits</button><button onclick="loadS('C')">C: Flavoured Soft Drink</button><button onclick="loadS('D')">D: Potato Chips</button></div>
+<label>PRODUCT DATABASE — pick a common Indian food (typical lists, verify on your pack)</label><select id="dbm" onchange="pick(this,'ing')"></select>
+<div id="scanbox" style="display:none;border:1px dashed var(--acc);padding:12px;margin:10px 0"><b>📷 SCAN A LABEL PHOTO</b><br><small>Take a photo or upload a clear picture of the ingredient list. Claude reads the text and the audit runs automatically. The photo is sent to Claude to read it and uses your own Claude usage.</small><div class="btns"><input id="lf" type="file" accept="image/*" capture="environment" style="max-width:280px"><button class="pri" onclick="scanL()">SCAN &amp; AUDIT</button></div><small id="sst"></small></div>
+<label>[01.A] PRODUCT NAME (OPTIONAL)</label><input id="pn">
+<label>[01.B] INGREDIENT DECLARATION — paste as printed</label><textarea id="ing" oninput="cc()"></textarea>
+<small id="cnt">CHARACTERS: 0 // ESTIMATED TOKENS: 0</small>
+<div class="btns"><button class="pri" onclick="runA()">RUN INGREDIENT AUDIT</button><button onclick="ing.value='';cc();aout.innerHTML=''">CLEAR</button></div></div>
+<div id="aout"></div></section>
+
+<section class="sec" id="s1"><h2>Nutrition report</h2>
+<p>Enter values per 100 g from the nutrition panel. Thresholds are illustrative (UK-FSA-style traffic lights), not regulatory.</p>
+<div class="card"><div class="row">
+<div><label>ENERGY kcal</label><input id="n_e" type="number" value="480"></div>
+<div><label>SUGAR g</label><input id="n_s" type="number" value="22"></div>
+<div><label>SAT FAT g</label><input id="n_f" type="number" value="8"></div>
+<div><label>SODIUM mg</label><input id="n_na" type="number" value="900"></div>
+<div><label>PROTEIN g</label><input id="n_p" type="number" value="7"></div>
+<div><label>FIBRE g</label><input id="n_fi" type="number" value="2"></div></div>
+<div class="btns"><button class="pri" onclick="runN2()">GENERATE REPORT</button></div></div>
+<div id="nout"></div></section>
+
+<section class="sec" id="s2"><h2>Diet planner</h2>
+<p>BMR via Mifflin-St Jeor; BMI classed with WHO Asian cut-offs; five-meal Indian plan scaled to your target.</p>
+<div class="card"><div class="row">
+<div><label>AGE</label><input id="p_a" type="number" value="20"></div>
+<div><label>SEX</label><select id="p_x"><option value="m">Male</option><option value="f">Female</option></select></div>
+<div><label>HEIGHT cm</label><input id="p_h" type="number" value="172"></div>
+<div><label>WEIGHT kg</label><input id="p_w" type="number" value="70"></div>
+<div><label>ACTIVITY</label><select id="p_ac"><option value="1.2">Sedentary</option><option value="1.375" selected>Light</option><option value="1.55">Moderate</option><option value="1.725">Very active</option></select></div>
+<div><label>GOAL</label><select id="p_g"><option value="-500">Lose fat (−500)</option><option value="0" selected>Maintain</option><option value="300">Gain (+300)</option></select></div>
+<div><label>DIET</label><select id="p_v"><option value="1">Vegetarian</option><option value="0">Non-veg</option></select></div></div>
+<div class="btns"><button class="pri" onclick="seed=0;runP()">GENERATE PLAN</button><button onclick="seed++;runP()">SHUFFLE MEALS</button></div></div>
+<div id="pout"></div></section>
+
+<section class="sec" id="s3"><h2>Compare foods</h2>
+<p>Audit two declarations side by side.</p>
+<div class="grid2"><div class="card"><label>PRODUCT A</label><select class="dbs" onchange="pick(this,'c1')"></select><textarea id="c1"></textarea></div><div class="card"><label>PRODUCT B</label><select class="dbs" onchange="pick(this,'c2')"></select><textarea id="c2"></textarea></div></div>
+<div class="btns"><button class="pri" onclick="runC()">COMPARE</button><button class="pri" onclick="c1.value=S.M[1];c2.value=S.K[1];runC()">MAGGI vs KURKURE</button><button onclick="c1.value=S.A[1];c2.value=S.B[1]">LOAD SAMPLES A vs B</button></div>
+<div id="cout"></div><small>Maggi / Kurkure lists are illustrative, typed from general knowledge. Paste the exact text from your own pack for a real audit.</small></section>
+
+<section class="sec" id="s4"><h2>Saved audits</h2>
+<p>Saved audits live only in this browser.</p><div id="aro"></div>
+<div class="btns"><button onclick="clr()">WIPE ARCHIVE</button></div></section>
+<section class="sec" id="s5"><h2>Weekly tracker</h2><p>Log what you eat. Each food gets its health mark and your week gets a score.</p>
+<div class="card"><label>ADD A FOOD</label><select id="tdb" class="dbs"></select><label>SERVINGS</label><select id="tq"><option>0.5</option><option selected>1</option><option>1.5</option><option>2</option><option>3</option></select><label>YOUR WEIGHT (kg) — sets your protein goal</label><input id="tw" type="number" value="60" min="10" max="200" onchange="W=Math.min(200,Math.max(10,+this.value||60));showT()"><label>MEAL</label><select id="tm"><option>Breakfast</option><option>Lunch</option><option>Snack</option><option>Dinner</option></select><div class="btns"><button class="pri" onclick="tadd()">ADD TO TODAY</button><button onclick="addLast(this,tm.value)">ADD MY LAST AUDIT</button></div></div>
+<div id="tout"></div><div class="btns"><button onclick="tclr()">CLEAR ALL LOGS</button></div></section>
+
+<footer id="ft"></footer>
+</main>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const AD=`102|Tartrazine|Colour|2|Azo dye; sensitivity reported in some people
+110|Sunset Yellow FCF|Colour|2|Azo dye; sensitivity reported
+129|Allura Red AC|Colour|2|Azo dye
+133|Brilliant Blue FCF|Colour|1|Synthetic colour
+150d|Caramel IV|Colour|1|Processing colour
+160a|Beta-carotene|Colour|0|Natural-origin colour
+160c|Paprika extract|Colour|0|Natural-origin colour
+200|Sorbic acid|Preservative|0|
+202|Potassium sorbate|Preservative|0|
+211|Sodium benzoate|Preservative|1|Reviewed in acidic drinks
+220|Sulphur dioxide|Preservative|1|Sulphite; may affect asthmatics
+223|Sodium metabisulphite|Preservative|1|Sulphite
+250|Sodium nitrite|Preservative|2|Curing agent in processed meats
+282|Calcium propionate|Preservative|1|Bread preservative
+296|Malic acid|Acidity regulator|0|
+300|Ascorbic acid|Antioxidant|0|Vitamin C
+306|Tocopherols|Antioxidant|0|Vitamin E
+319|TBHQ|Antioxidant|2|Synthetic; usage limits apply
+320|BHA|Antioxidant|2|Synthetic; usage limits apply
+321|BHT|Antioxidant|2|Synthetic; usage limits apply
+322|Lecithin|Emulsifier|0|
+330|Citric acid|Acidity regulator|0|
+331|Sodium citrates|Acidity regulator|0|
+338|Phosphoric acid|Acidity regulator|1|Common in colas; phosphate load
+339|Sodium phosphates|Acidity regulator|1|Phosphate load
+407|Carrageenan|Thickener|1|Under periodic review
+412|Guar gum|Thickener|0|
+415|Xanthan gum|Thickener|0|
+450|Diphosphates|Raising agent|1|Phosphate load
+451|Triphosphates|Raising agent|1|Phosphate load
+471|Mono/diglycerides|Emulsifier|0|
+481|Sodium stearoyl lactylate|Emulsifier|0|
+500|Sodium carbonates|Raising agent|0|
+503|Ammonium carbonates|Raising agent|0|
+508|Potassium chloride|Salt substitute|0|
+551|Silicon dioxide|Anticaking|0|
+621|Monosodium glutamate|Flavour enhancer|1|Adds sodium
+627|Disodium guanylate|Flavour enhancer|1|Usually paired with MSG
+631|Disodium inosinate|Flavour enhancer|1|Usually paired with MSG
+950|Acesulfame K|Sweetener|1|Artificial sweetener
+951|Aspartame|Sweetener|2|Phenylalanine — people with PKU must avoid
+954|Saccharin|Sweetener|1|Artificial sweetener
+955|Sucralose|Sweetener|1|Artificial sweetener`.split('\n').map(l=>{const[c,n,k,v,t]=l.split('|');return{c,n,k,v:+v,t}});
+const KW=[[/palm(olein)?\s*oil|palmolein/i,'Palm oil','Fat',1,'Saturated-fat source',8],[/\bsugar\b|invert syrup|glucose syrup|fructose/i,'Added sugar','Sugar',1,'Added sugars',8],[/maltodextrin/i,'Maltodextrin','Carbohydrate',1,'High glycaemic filler',5],[/maida|refined wheat flour/i,'Refined flour','Grain',1,'Low fibre',6],[/hydrogenated|margarine|vanaspati/i,'Hydrogenated fat','Fat',2,'Possible trans-fat route',14],[/monosodium glutamate|\bmsg\b/i,'MSG (named)','Flavour enhancer',1,'Adds sodium',3],[/artificial flavou?r|nature.identical/i,'Added flavour','Flavour',1,'Non-wholefood flavouring',3]];
+const S={A:['Instant Noodles','Refined wheat flour (maida) (70%), palm oil, salt, wheat gluten, thickener (INS 412), acidity regulator (INS 500(i)). Tastemaker: sugar, salt, flavour enhancer (INS 627, INS 631), maltodextrin, spices, colour (INS 150d), anticaking agent (INS 551), monosodium glutamate, hydrolysed vegetable protein.'],B:['Packaged Biscuits','Refined wheat flour, sugar, edible vegetable oil (palm), invert syrup, raising agents (INS 500(ii), INS 503(ii)), emulsifier (INS 322), salt, milk solids, artificial flavour (vanilla), antioxidant (INS 319).'],C:['Flavoured Soft Drink','Carbonated water, sugar, acidity regulator (INS 338, INS 330), colour (INS 150d), preservative (INS 211), artificial sweeteners (aspartame INS 951, acesulfame K INS 950), flavour (nature identical), caffeine.'],D:['Packaged Potato Chips','Potato (70%), edible vegetable oil (palmolein), salt, sugar, spices & condiments (onion powder, chilli), flavour enhancer (INS 621), antioxidant (INS 319), colour (INS 160c), maltodextrin, acidity regulator (INS 330).']};
+S.M=['Instant noodles (Maggi-style)','Refined wheat flour (maida), palm oil, iodised salt, thickener (INS 412), acidity regulators (INS 501(i), INS 500(i)). Tastemaker: spices, sugar, salt, flavour enhancers (INS 627, INS 631), maltodextrin, hydrolysed vegetable protein, onion powder, colour (INS 150d).'];S.K=['Corn puff snack (Kurkure-style)','Rice meal, edible vegetable oil (palmolein), corn meal, gram meal, spices and condiments, salt, sugar, maltodextrin, flavour enhancers (INS 627, INS 631), acidity regulator (INS 330), colours (INS 160c, INS 102), anticaking agent (INS 551).'];
+const R=[[0,'Vegetable poha + peanuts',250],[0,'Moong dal chilla (2) + mint chutney',220],[0,'Idli (3) + sambar',260],[0,'Vegetable upma',240],[0,'Egg bhurji (2 eggs) + 1 roti',320,1],[1,'Roasted chana, handful',150],[1,'Seasonal fruit chaat',120],[1,'Buttermilk + 6 almonds',140],[1,'Sprouts salad',130],[1,'Boiled eggs (2)',140,1],[2,'Dal + 2 roti + sabzi + salad',480],[2,'Rajma + rice',520],[2,'Chole + 2 roti + salad',500],[2,'Vegetable khichdi + curd',450],[2,'Palak paneer + 2 roti',520],[2,'Chicken curry + rice',560,1],[2,'Fish curry + rice',540,1],[3,'Roasted makhana',110],[3,'Khakhra + masala chai',130],[3,'Dhokla (3 pcs)',160],[3,'Corn chaat',150],[3,'Sattu drink',140],[4,'Moong dal + 2 roti + lauki',400],[4,'Vegetable dalia',350],[4,'Paneer bhurji + 2 roti',430],[4,'Vegetable soup + besan chilla',330],[4,'Lauki chana dal + 2 roti',380],[4,'Grilled chicken + sabzi + roti',420,1],[4,'Egg curry + 2 roti',440,1]];
+const SL=['Breakfast','Mid-morning','Lunch','Evening snack','Dinner'],PC=[.25,.1,.3,.1,.25];
+let seed=0;
+const tabs=['01 Scanner','02 Nutrition','03 Diet Plan','04 Compare','05 Archive','06 Tracker'];
+function nav(){$('#nav').innerHTML=tabs.map((t,i)=>`<button data-i="${i}" onclick="go(${i})"><span class="ic">${['📷','📊','🥗','⚖️','🗂️','📅'][i]}</span><span>${t.slice(3)}</span>${i==4?' '+arc().length:''}</button>`).join('')}
+function go(i){document.querySelectorAll('.sec').forEach((s,k)=>s.classList.toggle('on',k==i));document.querySelectorAll('nav button').forEach((b,k)=>b.classList.toggle('on',k==i));if(i==4)showA();if(i==5)showT();scrollTo(0,0)}
+function cc(){const n=ing.value.length;cnt.textContent=`CHARACTERS: ${n} // ESTIMATED TOKENS: ${Math.ceil(n/4)}`}
+function loadS(k){pn.value=S[k][0];ing.value=S[k][1];cc();go(0)}
+function split(t){const o=[];let d=0,b='';for(const c of t){if('([{'.includes(c))d++;if(')]}'.includes(c))d=Math.max(0,d-1);if((c==','||c==';'||c=='.')&&d==0){if(b.trim())o.push(b.trim());b=''}else b+=c}if(b.trim())o.push(b.trim());return o}
+function audit(t){
+const items=split(t),adds=[],seen={},flags=[];
+const P=/(?:\b(?:INS|E)\s*-?\s*|[(\[,]\s*)(\d{3})(?:\s*\(?([a-d])\)?)?(?![\d])(?!\s*(?:g|mg|ml|kg|%))/gi;let m;
+while(m=P.exec(t)){const num=m[1],l=(m[2]||'').toLowerCase();const a=AD.find(x=>x.c==num+l)||AD.find(x=>x.c==num);if(a&&!seen[a.c]){seen[a.c]=1;adds.push(a)}}
+let pen=0;adds.forEach(a=>pen+=a.v==2?12:a.v==1?4:0);
+KW.forEach(k=>{if(k[0].test(t)){flags.push(k);pen+=k[5]}});
+const first=items.slice(0,3).join(' ');
+const lead=[];if(/sugar|syrup/i.test(first)){lead.push('Sugar appears in the first three ingredients');pen+=6}if(/\bsalt\b/i.test(first)){lead.push('Salt appears in the first three ingredients');pen+=4}if(/oil|fat/i.test(first)){lead.push('A fat/oil is among the first three ingredients');pen+=3}
+const score=Math.max(0,100-pen),g=score>=80?'A':score>=60?'B':score>=40?'C':'D';
+return{items,adds,flags,lead,score,g,cnt:items.length}}
+function verdict(a){const s=a.score;return s>=80?'LOWER CONCERN — mostly simple ingredients':s>=60?'MODERATE — some ingredients worth limiting':s>=40?'HIGH CONCERN — ultra-processed profile':'VERY HIGH CONCERN — best kept as an occasional food'}
+function aHTML(a,name){
+const col=a.score>=70?'l0':a.score>=45?'l1':'l2';const r2=a.adds.filter(x=>x.v==2).length,r1=a.adds.filter(x=>x.v==1).length;
+return `<div class="card"><div class="score"><div class="big ${col}">${a.score}</div><div><b>MARK: ${(a.score/10).toFixed(1)} / 10 · GRADE ${a.g}</b><br><b class="${col}">${verdict(a)}</b><br><small>${r2} additive(s) to review · ${r1} to note · ${a.flags.length} composition flag(s) · higher mark = fewer unhealthy ingredients</small><br><small>${esc(name||'Unnamed specimen')} · ${a.cnt} declared items · ${a.adds.length} indexed additives</small></div></div>
+${a.lead.map(x=>`<div class="l1">▲ ${x}</div>`).join('')}
+<h2 style="font-size:16px;margin-top:14px">COMPOSITION FLAGS</h2>${a.flags.map(f=>`<span class="chip l${f[3]}">${f[1]} — ${f[4]}</span>`).join('')||'<small>None detected.</small>'}
+<h2 style="font-size:16px;margin-top:14px">ADDITIVES</h2>${a.adds.length?`<div class="scroll"><table><tr><th>INS</th><th>NAME</th><th>CLASS</th><th>NOTE</th></tr>${a.adds.map(x=>`<tr><td>${x.c}</td><td class="l${x.v}">${x.n}</td><td>${x.k}</td><td>${x.t||'—'}</td></tr>`).join('')}</table></div>`:'<small>No indexed INS / E-numbers found.</small>'}
+<h2 style="font-size:16px;margin-top:14px">DECLARATION ORDER (heaviest first)</h2><ol style="margin:4px 0;padding-left:20px">${a.items.map(i=>`<li>${esc(i.length>90?i.slice(0,90)+'…':i)}</li>`).join('')}</ol>
+<small>Educational review index — not medical advice or a safety verdict.</small></div>`}
+let last=null;
+function runA(){const t=ing.value.trim();if(!t){aout.innerHTML='<div class="card l1">Paste an ingredient declaration first.</div>';return}
+last={name:pn.value,a:audit(t),t};showVerd();aout.innerHTML=aHTML(last.a,last.name)+`<div id="sgb">${sugBox()}</div>`+`<div class="btns"><button onclick="save()">SAVE TO ARCHIVE</button><button onclick="addLast(this)">➕ ADD TO TODAY</button></div>`}
+function runC(){const a=audit(c1.value),b=audit(c2.value);const w=a.score==b.score?'Tie':a.score>b.score?'Product A scores higher':'Product B scores higher';
+cout.innerHTML=`<div class="card"><b>${w}</b> <small>(A: ${a.score} · B: ${b.score}; higher = fewer review flags)</small></div><div class="grid2"><div>${aHTML(a,'Product A')}</div><div>${aHTML(b,'Product B')}</div></div>`}
+function runN(){const v={e:+n_e.value,s:+n_s.value,f:+n_f.value,na:+n_na.value,p:+n_p.value,fi:+n_fi.value};
+const L=(n,x,lo,hi,u)=>{const c=x>hi?2:x>lo?1:0;return `<tr><td>${n}</td><td>${x} ${u}</td><td class="l${c}">${['LOW','MEDIUM','HIGH'][c]}</td></tr>`};
+const gl=(n,x,t,u)=>`<tr><td>${n}</td><td>${x} ${u}</td><td class="l${x>=t?0:1}">${x>=t?'GOOD SOURCE':'LOW'}</td></tr>`;
+nout.innerHTML=`<div class="card"><div class="scroll"><table><tr><th>NUTRIENT /100 g</th><th>VALUE</th><th>BAND</th></tr>${L('Sugar',v.s,5,15,'g')}${L('Saturated fat',v.f,1.5,5,'g')}${L('Sodium',v.na,120,600,'mg')}${gl('Protein',v.p,10,'g')}${gl('Fibre',v.fi,6,'g')}</table></div><p>Energy density: <b>${v.e} kcal/100 g</b> — ${v.e>400?'energy-dense; watch portion size':v.e>250?'moderate':'light'}.</p><small>Bands are illustrative, not FSSAI limits.</small></div>`}
+function runP(){const a=+p_a.value,h=+p_h.value,w=+p_w.value,s=p_x.value=='m';
+if(!(a>0&&h>0&&w>0)){pout.innerHTML='<div class="card l1">Fill all body metrics.</div>';return}
+const bmi=w/(h/100)**2,cls=bmi<18.5?'Underweight':bmi<23?'Normal (Asian range)':bmi<25?'Overweight risk (Asian)':bmi<30?'Overweight (Asian)':'Obese (Asian)';
+const bmr=10*w+6.25*h-5*a+(s?5:-161),tdee=bmr*+p_ac.value,tgt=Math.max(s?1500:1200,Math.round(tdee+ +p_g.value)),pr=Math.round(w*(+p_g.value==0?1.2:1.6));
+const veg=p_v.value=='1';
+const rows=SL.map((n,i)=>{const pool=R.filter(r=>r[0]==i&&(!veg||!r[3]));const r=pool[(seed*3+i*2+Math.floor(a/7))%pool.length]||pool[0];const t=tgt*PC[i];let x=Math.round(t/r[2]*4)/4;x=Math.min(2,Math.max(.5,x));return `<tr><td>${n}</td><td>${r[1]}</td><td>×${x}</td><td>${Math.round(r[2]*x)}</td></tr>`}).join('');
+pout.innerHTML=`<div class="card"><div class="row"><div><small>BMI</small><div class="big" style="font-size:34px">${bmi.toFixed(1)}</div><small>${cls}</small></div><div><small>BMR</small><div class="big" style="font-size:34px">${Math.round(bmr)}</div><small>kcal/day</small></div><div><small>TDEE</small><div class="big" style="font-size:34px">${Math.round(tdee)}</div><small>kcal/day</small></div><div><small>TARGET</small><div class="big l1" style="font-size:34px">${tgt}</div><small>kcal · ~${pr} g protein</small></div></div></div>
+<div class="card scroll"><table><tr><th>MEAL</th><th>DISH</th><th>PORTION</th><th>KCAL</th></tr>${rows}</table><p><small>Portions are scaled to the slot's share of your target. Educational only — consult a registered dietitian for medical conditions.</small></p></div>`}
+function arc(){try{return JSON.parse(localStorage.getItem('fx_arc')||'[]')}catch(e){return[]}}
+function wr(x){try{localStorage.setItem('fx_arc',JSON.stringify(x))}catch(e){}}
+function save(){if(!last)return;const x=arc();x.unshift({t:new Date().toLocaleString(),n:last.name||'Unnamed',s:last.a.score,g:last.a.g,k:last.a.adds.length});wr(x.slice(0,30));nav();go(4)}
+function showA(){const x=arc();aro.innerHTML=x.length?`<div class="card scroll"><table><tr><th>WHEN</th><th>SPECIMEN</th><th>INDEX</th><th>ADDITIVES</th><th></th></tr>${x.map((r,i)=>`<tr><td>${esc(r.t)}</td><td>${esc(r.n)}</td><td>${r.s} (${r.g})</td><td>${r.k}</td><td><button onclick="del(${i})">✕</button></td></tr>`).join('')}</table></div>`:'<div class="card"><small>Archive is empty. Run an audit and save it.</small></div>'}
+function del(i){const x=arc();x.splice(i,1);wr(x);nav();go(4)}
+function clr(){wr([]);nav();go(4)}
+ft.innerHTML=`<b>FITOPTIX LAB ENGINE</b> — "READ BEFORE YOU EAT."<br>Pure client-side label deconstruction and Indian meal planner. No frameworks, no backend, no tracking.<br>METHODOLOGY: indexed against ${AD.length} additives (INS / E-numbers) and ${R.length} Indian wholefood dishes. Energy via Mifflin-St Jeor (1990); BMI classes per WHO Asian guidance.`;
+let smp=null;
+if(window.claude&&claude.use)claude.use('sample').then(f=>{if(f){smp=f;scanbox.style.display='block'}}).catch(()=>{});
+function shrink(f){return new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?ok(b):no(),'image/jpeg',.85)};im.onerror=no;im.src=u})}
+async function scanL(){const f=lf.files[0];if(!f){sst.textContent='Choose or take a photo first.';return}
+sst.textContent='Reading label…';
+try{const b=await shrink(f);const r=await smp('This is a photo of a packaged food label. Reply with ONLY the ingredient declaration exactly as printed, as one line, keeping INS/E-numbers and brackets. If the product name is visible, put it first on its own line starting with NAME: . If there is no readable ingredient list, reply exactly NOT_READABLE.',{images:[b],modelTier:'quick',cache:false});
+const t=r.text.trim();if(/NOT_READABLE/.test(t)){sst.textContent='Could not read an ingredient list. Try a closer, sharper, well-lit photo.';return}
+const m=t.match(/^NAME:\s*(.*)\n?/i);if(m){pn.value=m[1].trim();ing.value=t.replace(m[0],'').trim()}else ing.value=t;cc();sst.textContent='Label read. Check the text below and fix any mistakes, then press RUN INGREDIENT AUDIT again if you edit it.';runA()}
+catch(e){sst.textContent=e&&e.code=='not_granted'?'Permission declined. Paste the ingredient text instead.':'Scan failed ('+((e&&e.code)||'error')+'). Paste the ingredient text instead.'}}
+const DB=[
+['Maggi Masala Noodles',S.M[1]],
+['Yippee Noodles','Wheat flour, palm oil, salt, thickener (INS 412), acidity regulator (INS 501(i)). Tastemaker: sugar, salt, spices, flavour enhancers (INS 627, INS 631), maltodextrin, colour (INS 150d).'],
+['Kurkure Masala Munch',S.K[1]],
+['Lays Classic Salted','Potato, edible vegetable oil (palmolein), salt.'],
+['Lays Magic Masala','Potato, edible vegetable oil (palmolein), sugar, salt, spices, flavour enhancer (INS 621), maltodextrin, acidity regulator (INS 330), colour (INS 160c).'],
+['Haldirams Aloo Bhujia','Moth bean flour, potato, edible vegetable oil (palmolein), spices, salt, acidity regulator (INS 330).'],
+['Amul Taaza Milk','Pasteurised toned milk.'],
+['Amul Butter','Pasteurised cream, salt.'],
+['Amul Cheese Slices','Cheese, emulsifying salts (INS 331, INS 339), salt, preservative (INS 200).'],
+['Amul Dahi (curd)','Pasteurised milk, active cultures.'],
+['Paneer','Milk, acidity regulator (INS 330).'],
+['Parle-G Biscuits','Wheat flour, sugar, edible vegetable oil (palm), invert syrup, raising agents (INS 503(ii), INS 500(ii)), salt, milk solids, emulsifier (INS 322), dough conditioner (INS 223).'],
+['Britannia Good Day Butter','Refined wheat flour, sugar, edible vegetable oil (palm), butter, cashew, invert syrup, raising agents (INS 500(ii), INS 503(ii)), emulsifier (INS 322), salt, artificial flavour.'],
+['Cream Sandwich Biscuit (Oreo-style)','Refined wheat flour, sugar, edible vegetable oil (palm), cocoa solids, invert syrup, raising agents (INS 500(ii), INS 503(ii)), emulsifier (INS 322), salt, artificial flavour (vanilla).'],
+['Cola Drink (Coca-Cola / Pepsi style)','Carbonated water, sugar, colour (INS 150d), acidity regulator (INS 338), flavours, caffeine.'],
+['Mango Drink (Frooti style)','Water, sugar, mango pulp, acidity regulator (INS 330), antioxidant (INS 300), preservative (INS 211), flavour (nature identical), colour (INS 160a).'],
+['Energy Drink (Red Bull style)','Carbonated water, sugar, acidity regulators (INS 330, INS 331), caffeine, colour (INS 150d), preservative (INS 211), artificial sweetener (acesulfame K INS 950), flavour.'],
+['Malt Health Drink (Bournvita style)','Sugar, malt extract, cocoa solids, milk solids, minerals, colour (INS 150d), emulsifier (INS 322), artificial flavour.'],
+['Milk Chocolate (Dairy Milk style)','Sugar, milk solids, cocoa butter, cocoa mass, emulsifier (INS 322), artificial flavour (vanilla).'],
+['Packaged White Bread','Refined wheat flour (maida), yeast, sugar, edible vegetable oil (palm), iodised salt, preservative (INS 282), emulsifier (INS 471), flour treatment (INS 300).'],
+['Corn Flakes (Kelloggs style)','Milled corn, sugar, malt extract, iodised salt, antioxidant (INS 306), vitamins and minerals.'],
+['Rolled Oats','100% rolled oats.'],
+['Whole Wheat Atta','100% whole wheat.'],
+['Peanut Butter','Roasted peanuts (90%), sugar, edible vegetable oil (palmolein), salt, emulsifier (INS 471).'],
+['Tomato Ketchup','Tomato paste, sugar, salt, onion, garlic, preservative (INS 211), stabiliser (INS 415), acidity regulator (INS 330).']];
+function pick(sel,t){if(sel.value==='')return;const p=DB[+sel.value];if(t=='ing'){pn.value=p[0];ing.value=p[1];cc();runA()}else document.getElementById(t).value=p[1]}
+document.querySelectorAll('#dbm,.dbs').forEach(s=>s.innerHTML='<option value="">— pick a food from the database —</option>'+DB.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join(''));
+let W=60;
+const EX={'102':[10,'Azo dye. Some kids show hyperactivity or allergy-like reactions (hives, asthma) in sensitive people.'],'110':[4,'Azo dye. Same concerns as tartrazine: hyperactivity in some kids, allergy-like reactions.'],'129':[7,'Azo dye. Hyperactivity in some kids and sensitivity reactions.'],'133':[6,'Synthetic dye. Rare sensitivity reactions; little else reported at normal intake.'],'150d':[200,'May carry traces of 4-MeI, a contaminant still under study. Fine at normal intake, but daily cola habits add up.'],'202':[25,'Low concern. Rarely causes skin irritation.'],'211':[5,'Can cause skin or asthma reactions in sensitive people. With vitamin C in drinks it can form small amounts of benzene, so avoid bottles stored in heat or sun.'],'220':[0.7,'Sulphites can trigger asthma attacks, wheeze, hives or headache in sensitive people, especially asthmatics.'],'223':[0.7,'Sulphite. Can trigger asthma attacks, wheeze or hives in sensitive people.'],'250':[0.07,'Can form nitrosamines in the body. High intake of cured meats is linked to higher colorectal cancer risk. Very large doses reduce oxygen carrying in blood.'],'282':[null,'Low concern. One study reported irritability in some kids; the evidence is weak.'],'319':[0.7,'Synthetic antioxidant. Very high doses caused stomach and liver effects in animal studies. Stay within the limit.'],'320':[0.5,'IARC lists BHA as possibly carcinogenic (2B) from animal data. Human risk at food levels is unclear.'],'321':[0.3,'High doses affected liver and thyroid in animal studies. Human evidence is limited.'],'338':[70,'Limit is counted as phosphorus from all additives. Too much phosphate strains the kidneys, can weaken bones and calcify blood vessels, mainly in kidney disease. Colas are a big source.'],'339':[70,'Limit is counted as phosphorus from all additives. Too much phosphate strains the kidneys and bones, mainly in kidney disease.'],'450':[70,'Limit is counted as phosphorus from all additives. Too much phosphate strains the kidneys and bones, mainly in kidney disease.'],'451':[70,'Limit is counted as phosphorus from all additives. Too much phosphate strains the kidneys and bones, mainly in kidney disease.'],'407':[null,'Some people report bloating or gut irritation. Research is still debated.'],'621':[null,'Adds sodium. Some people report headache or flushing, though blinded trials have not confirmed it for most. Counts toward your salt limit.'],'627':[null,'Broken down into purines, so people with gout or high uric acid should limit it. Usually paired with MSG, so salt rises too.'],'631':[null,'Broken down into purines, so people with gout or high uric acid should limit it. Usually paired with MSG, so salt rises too.'],'950':[15,'Large amounts can upset digestion. Long-term effects are still being studied.'],'951':[40,'People with phenylketonuria (PKU) must avoid it. IARC lists it as possibly carcinogenic (2B), but JECFA kept the limit at 40 mg/kg. Some people report headaches.'],'954':[5,'Older rat bladder findings did not carry over to humans. Large amounts may upset digestion.'],'955':[15,'Large amounts may upset digestion. Long-term gut and blood sugar effects are still being studied.']};
+const NX={'Added sugar':['Free sugars under 10% of energy (about 50 g/day), ideally under 5% (about 25 g)','Excess sugar adds calories and is linked to weight gain, type 2 diabetes, fatty liver, tooth decay and heart disease.'],'Salt':['Under 5 g salt (about 2 g sodium) per day (WHO)','Too much raises blood pressure, which raises stroke, heart and kidney disease risk. Instant foods and chips add up fast.'],'Palm oil':['Saturated fat under 10% of energy (about 22 g/day on 2,000 kcal)','High saturated fat raises LDL cholesterol and heart disease risk.'],'Hydrogenated fat':['Trans fat under 1% of energy (about 2 g/day), ideally none','Trans fat raises LDL, lowers HDL and strongly raises heart disease risk.'],'Maltodextrin':['No set limit; count it as sugar or carbs','Raises blood sugar fast. Relevant for diabetes and weight control.'],'Refined flour':['No set limit; swap with whole grains when you can','Low fibre. Large amounts raise blood sugar and give little fullness.'],'MSG (named)':['No numeric limit set by JECFA','Adds sodium. Some people report headache or flushing. Counts toward your salt limit.'],'Added flavour':['No set limit','Mostly a sign of a highly processed food.']};
+function sugBox(){if(!last)return'';const a=last.a,t=last.t,rw=[];
+a.adds.forEach(x=>{const e=EX[x.c],m=e&&e[0]?e[0]*W:0;rw.push([`${x.n} <small>(INS ${x.c})</small>`,m?`${m.toFixed(m<10?1:0)} mg/day <small>(${e[0]} mg per kg)</small>`:'No numeric limit set',e?e[1]:'Low concern at normal food use.',x.v])});
+const nk=a.flags.map(f=>f[1]);if(/\bsalt\b/i.test(t))nk.push('Salt');
+nk.forEach(k=>{const n=NX[k];if(n)rw.push([k,n[0],n[1],1])});
+rw.sort((p,q)=>q[3]-p[3]);
+return `<div class="card"><b>💡 SUGGESTION BOX — limits &amp; effects</b><br><small>Daily limits are ADI / WHO guidance values for healthy adults, per kg body weight, for ALL foods combined. A label does not print additive amounts, so this is a ceiling, not what one pack contains.</small><label>YOUR WEIGHT (kg)</label><input id="sw" type="number" value="${W}" min="10" max="200" onchange="W=Math.min(200,Math.max(10,+this.value||60));showSug()" style="max-width:140px">`+(rw.length?`<div class="scroll"><table><tr><th>INGREDIENT</th><th>DAILY LIMIT</th><th>IF YOU TAKE MORE</th></tr>${rw.map(r=>`<tr><td class="l${r[3]}">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table></div>`:'<p>No indexed additives or flagged ingredients found. This looks like a simple food.</p>')+`<p><small>Effects are risks seen with long-term high intake or in sensitive people, not a diagnosis. Kids, pregnancy, diabetes, high blood pressure, kidney or liver disease, asthma and allergies need advice from a doctor or dietitian. Fresh, whole foods keep you well inside these limits.</small></p></div>`}
+function showSug(){document.getElementById('sgb').innerHTML=sugBox()}
+let pic='';function showVerd(){const p=pic;pic='';const a=last.a,s=a.score,v=s>=80?['✅','Good choice','l0']:s>=60?['🟡','Okay in moderation','l1']:s>=40?['🟠','Limit it','l1']:['🔴','Avoid / rare treat','l2'];
+const why=[];a.adds.filter(x=>x.v==2).forEach(x=>why.push(`${x.n} — ${x.t}`));a.flags.forEach(f=>why.push(`${f[1]} — ${f[4]}`));a.lead.forEach(x=>why.push(x));
+document.getElementById('verd').innerHTML=`<div class="vc">${p?`<img class="pic" src="${p}" alt="Scanned label">`:''}<div class="ve">${v[0]}</div><div class="vb"><small>${esc(last.name||'Your food')}</small><div class="vt ${v[2]}">${v[1]}</div><div class="gauge"><i style="width:${s}%;background:var(--${s>=70?'ok':s>=45?'warn':'bad'})"></i></div><b>${(s/10).toFixed(1)} / 10</b> <small>higher = fewer unhealthy ingredients</small>${why.length?'<ul>'+why.slice(0,4).map(w=>`<li>${w}</li>`).join('')+'</ul>':'<p class="l0">Short, simple ingredient list. Nothing flagged.</p>'}</div></div>`}
+async function scanL2(inp){const f=inp.files[0];if(!f)return;const st=document.getElementById('sst2');
+if(!smp){st.textContent='Photo scan works when this page is opened inside Claude. Pick a food or paste the ingredients below instead.';inp.value='';return}
+st.textContent='Reading the label…';
+try{const b=await shrink(f);pic=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(b)});const r=await smp('This is a photo of a packaged food label. Reply with ONLY the ingredient declaration exactly as printed, as one line, keeping INS/E-numbers and brackets. If the product name is visible, put it first on its own line starting with NAME: . If there is no readable ingredient list, reply exactly NOT_READABLE.',{images:[b],modelTier:'quick',cache:false});
+const t=r.text.trim();if(/NOT_READABLE/.test(t)){st.textContent='Could not find an ingredient list. Try a closer, sharper, well-lit photo of the ingredients.';inp.value='';return}
+const m=t.match(/^NAME:\s*(.*)\n?/i);if(m){pn.value=m[1].trim();ing.value=t.replace(m[0],'').trim()}else{pn.value='';ing.value=t}cc();runA();st.textContent='Done. Scroll down for the full breakdown. Check the text for reading mistakes.'}
+catch(e){st.textContent=e&&e.code=='not_granted'?'Permission declined. Paste the ingredients instead.':'Scan failed ('+((e&&e.code)||'error')+'). Paste the ingredients instead.'}inp.value=''}
+function runN2(){const v={e:+n_e.value,s:+n_s.value,f:+n_f.value,na:+n_na.value,p:+n_p.value,fi:+n_fi.value};
+const rw=[['Total Sugars',v.s,'g',50,v.s>15?2:v.s>5?1:0],['Saturated Fat',v.f,'g',22,v.f>5?2:v.f>1.5?1:0],['Sodium',v.na,'mg',2000,v.na>600?2:v.na>120?1:0],['Protein',v.p,'g',50,v.p>=10?0:1],['Dietary Fibre',v.fi,'g',25,v.fi>=6?0:1]];
+const hi=rw.slice(0,3).filter(r=>r[4]==2).length,vd=hi==0?['✅','Fairly balanced per 100 g','l0']:hi==1?['🟡','One nutrient is high','l1']:['🔴',hi+' nutrients are high','l2'];
+nout.innerHTML=`<div class="nf"><div class="nf-h">Nutrition Facts</div><div class="nf-s">Per 100 g</div><div class="nf-cal"><span>Calories</span><b>${v.e}</b></div><div class="nf-hd">% Daily guide*</div>${rw.map(r=>`<div class="nf-r"><span><b>${r[0]}</b> ${r[1]}${r[2]}</span><span><i class="dot" style="background:var(--${['ok','warn','bad'][r[4]]})"></i><b>${Math.round(r[1]/r[3]*100)}%</b></span></div>`).join('')}<div class="nf-f">*Based on a 2,000 kcal diet. Dots: green good, amber watch, red high. Educational guide only.</div></div><div class="vc"><div class="ve">${vd[0]}</div><div class="vb"><div class="vt ${vd[2]}">${vd[1]}</div><small>Per 100 g, illustrative bands</small></div></div>`}
+const PK=[['🍜','#facc15','#dc2626'],['🍝','#f97316','#be123c'],['🌽','#f59e0b','#b91c1c'],['🥔','#eab308','#a16207'],['🥔','#f43f5e','#9f1239'],['🥨','#f59e0b','#7c2d12'],['🥛','#38bdf8','#1d4ed8'],['🧈','#fbbf24','#d97706'],['🧀','#fbbf24','#b45309'],['🥣','#7dd3fc','#0284c7'],['🍲','#4ade80','#15803d'],['🍪','#facc15','#d97706'],['🍪','#fb923c','#b45309'],['🍪','#3b82f6','#1e3a8a'],['🥤','#ef4444','#7f1d1d'],['🥭','#fbbf24','#ea580c'],['⚡','#38bdf8','#4338ca'],['🍫','#a16207','#451a03'],['🍫','#8b5cf6','#3b0764'],['🍞','#fcd34d','#b45309'],['🥣','#fde047','#dc2626'],['🌾','#d6d3d1','#78716c'],['🌾','#fbbf24','#b45309'],['🥜','#d97706','#78350f'],['🍅','#ef4444','#991b1b']];
+document.getElementById('shelf').innerHTML=DB.map((p,i)=>{const k=PK[i]||['🍽️','#64748b','#334155'],s=audit(p[1]).score;return `<button class="pack" onclick="pk(${i})"><div class="bag" style="--c1:${k[1]};--c2:${k[2]}"><span class="em">${k[0]}</span><b>${p[0].split('(')[0].trim()}</b></div><div class="pn">${p[0]}</div><span class="sc l${s>=70?0:s>=45?1:2}">${(s/10).toFixed(1)} / 10</span></button>`}).join('');
+function pk(i){const p=DB[i];pn.value=p[0];ing.value=p[1];cc();runA();document.getElementById('verd').scrollIntoView({behavior:'smooth',block:'center'})}
+function LG(){try{return JSON.parse(localStorage.getItem('fx_log')||'{}')}catch(e){return{}}}
+function SV(x){try{localStorage.setItem('fx_log',JSON.stringify(x))}catch(e){}}
+const dk=d=>d.toLocaleDateString('en-CA');
+function autoSlot(){const h=new Date().getHours();return h<11?'Breakfast':h<15?'Lunch':h<19?'Snack':'Dinner'}
+function addLog(n,s,m){const L=LG(),k=dk(new Date());(L[k]=L[k]||[]).push({n,s,m});SV(L);showT()}
+function tadd(){if(tdb.value==='')return;const p=DB[+tdb.value];addLog(p[0],audit(p[1]).score,tm.value)}
+function addLast(b,sl){if(!last){if(b)b.textContent='Run an audit first';return}addLog(last.name||'Scanned food',last.a.score,sl||autoSlot());if(b)b.textContent='\u2713 Added to tracker'}
+function delT(i){const L=LG(),k=dk(new Date());if(L[k]){L[k].splice(i,1);SV(L);showT()}}
+function tclr(){SV({});showT()}
+function showT(){const L=LG(),now=new Date(),mon=new Date(now);mon.setDate(now.getDate()-(now.getDay()+6)%7);
+const days=[0,1,2,3,4,5,6].map(i=>{const d=new Date(mon);d.setDate(mon.getDate()+i);const k=dk(d),e=L[k]||[];return{l:'MTWTFSS'[i],e,a:e.length?e.reduce((x,y)=>x+y.s,0)/e.length:null,t:k==dk(now)}});
+const lg=days.filter(d=>d.a!==null),ws=lg.length?lg.reduce((x,d)=>x+d.a,0)/lg.length:null,all=days.flatMap(d=>d.e),junk=all.filter(x=>x.s<45).length,good=lg.filter(d=>d.a>=60).length;
+const v=ws===null?['📝','No foods logged yet','l1']:ws>=80?['🏆','Excellent week','l0']:ws>=60?['👍','Good week','l0']:ws>=40?['⚠️','Needs work','l1']:['🚨','Too much junk this week','l2'];
+const srt=[...all].sort((a,b)=>b.s-a.s),tip=ws===null?'Add a food above to start your week.':junk>=3?'Swap one packaged item a day with a wholefood such as fruit, curd or roasted chana.':junk>0?'Close. Cut the red items and your score climbs.':'Great choices. Keep it going.';
+const td=L[dk(now)]||[];
+tout.innerHTML=`<div class="card"><div class="wsc"><div class="big ${v[2]}">${ws===null?'–':(ws/10).toFixed(1)}</div><div><b>${v[0]} ${v[1]}</b><br><small>Weekly score out of 10 · ${lg.length}/7 days logged · ${good} good days · ${junk} junk items</small></div></div>
+<div class="wk">${days.map(d=>`<div class="wd${d.t?' td':''}"><div class="wb"><i style="height:${d.a===null?0:Math.max(6,d.a)}%;background:var(--${d.a>=70?'ok':d.a>=45?'warn':'bad'})"></i></div><small>${d.l}</small><b>${d.a===null?'–':(d.a/10).toFixed(1)}</b></div>`).join('')}</div>
+<p><small>${tip}</small></p>${all.length>1?`<small>🥇 Best pick: ${esc(srt[0].n)} (${(srt[0].s/10).toFixed(1)}) · ⚠️ Worst pick: ${esc(srt[srt.length-1].n)} (${(srt[srt.length-1].s/10).toFixed(1)})</small>`:''}</div>
+<div class="card"><b>Today</b>${td.length?`<div class="scroll"><table>${td.map((x,i)=>`<tr><td>${esc(x.m)}</td><td>${esc(x.n)}</td><td class="l${x.s>=70?0:x.s>=45?1:2}">${(x.s/10).toFixed(1)}</td><td><button onclick="delT(${i})">✕</button></td></tr>`).join('')}</table></div>`:'<p><small>Nothing logged today.</small></p>'}</div>`}
+const NU=[['1 pack (70 g)',310,12,44,2,7],['1 pack (70 g)',310,12,44,2,7],['1 small pack (30 g)',160,10,16,1,2],['1 small pack (30 g)',160,10,15,0,2],['1 small pack (30 g)',160,10,15,1,2],['30 g',170,11,14,1,4],['1 glass (250 ml)',140,7.5,12,12,8.5],['10 g',73,8,0,0,0.1],['1 slice (20 g)',65,5,1,0.5,4],['100 g',60,3,4,4,3.5],['50 g',130,10,1.5,1,9],['5 biscuits',125,3,21,6,2],['2 biscuits',125,6,16,6,1.5],['3 biscuits',140,6,21,11,1.5],['1 glass (250 ml)',105,0,26,26,0],['1 glass (200 ml)',110,0,27,26,0.2],['1 can (250 ml)',112,0,28,27,0],['20 g powder',80,0.5,18,15,1],['40 g bar',215,12,23,22,3],['2 slices',150,2,28,3,5],['30 g bowl',115,0.2,26,3,2],['40 g',150,2.7,26,1,5],['2 rotis',210,1.5,44,1,7],['1 tbsp (16 g)',95,8,3,1.5,4],['1 tbsp (15 g)',17,0,4,3.5,0.2]];
+function addLog(n,s,m,x){const L=LG(),k=dk(new Date());(L[k]=L[k]||[]).push(Object.assign({n,s,m},x||{}));SV(L);showT()}
+function tadd(){if(tdb.value==='')return;const i=+tdb.value,p=DB[i],u=NU[i],q=+tq.value;addLog(p[0],audit(p[1]).score,tm.value,u?{q,sv:u[0],kc:u[1]*q,f:u[2]*q,c:u[3]*q,su:u[4]*q,p:u[5]*q}:{})}
+function pie(T,title){const p=T.p*4,f=T.f*9,su=T.su*4,oc=Math.max(0,T.c-T.su)*4,tot=p+f+su+oc;if(tot<=0)return `<div><b>${title}</b><p><small>No nutrition data yet.</small></p></div>`;
+const pt=[['Protein',p,'#38bdf8'],['Fat',f,'#fbbf24'],['Sugar',su,'#fb7185'],['Other carbs',oc,'#a78bfa']];let a=0;const g=pt.map(x=>{const s=a;a+=x[1]/tot*100;return `${x[2]} ${s}% ${a}%`}).join(',');
+return `<div><b>${title}</b><div class="donut" style="background:conic-gradient(${g})"><span>${Math.round(T.kc)}<small>kcal</small></span></div><div class="lg">${pt.map(x=>`<span><i style="background:${x[2]}"></i>${x[0]} ${Math.round(x[1]/tot*100)}%</span>`).join('')}</div></div>`}
+function showT(){const L=LG(),now=new Date(),mon=new Date(now);mon.setDate(now.getDate()-(now.getDay()+6)%7);const tp=Math.max(10,W);
+const days=[0,1,2,3,4,5,6].map(i=>{const d=new Date(mon);d.setDate(mon.getDate()+i);const k=dk(d),e=L[k]||[],m=e.filter(x=>x.kc!=null),T={kc:0,f:0,c:0,su:0,p:0};m.forEach(x=>{T.kc+=x.kc;T.f+=x.f;T.c+=x.c;T.su+=x.su;T.p+=x.p});
+const q=e.length?e.reduce((a,x)=>a+x.s,0)/e.length:null;let nu=null;if(m.length)nu=100-Math.min(40,Math.max(0,(T.su-50)/50*40))-Math.min(30,Math.max(0,(T.f-65)/65*30))-(T.kc>0?Math.min(30,Math.max(0,(0.1-T.p*4/T.kc)/0.1*30)):0);
+return{l:'MTWTFSS'[i],e,q,nu,T,n:m.length,a:q===null?null:nu===null?q:(q+nu)/2,t:k==dk(now)}});
+const lg=days.filter(d=>d.a!==null),mean=(arr)=>arr.length?arr.reduce((x,y)=>x+y,0)/arr.length:null,ws=mean(lg.map(d=>d.a)),qa=mean(days.filter(d=>d.q!==null).map(d=>d.q)),na=mean(days.filter(d=>d.nu!==null).map(d=>d.nu));
+const all=days.flatMap(d=>d.e),junk=all.filter(x=>x.s<45).length,good=lg.filter(d=>d.a>=60).length,WT={kc:0,f:0,c:0,su:0,p:0};days.forEach(d=>{for(const k in WT)WT[k]+=d.T[k]});
+const ND=days.filter(d=>d.n).length,TD=days.find(d=>d.t).T;
+const v=ws===null?['📝','No foods logged yet','l1']:ws>=80?['🏆','Excellent week','l0']:ws>=60?['👍','Good week','l0']:ws>=40?['⚠️','Needs work','l1']:['🚨','Too much junk or sugar this week','l2'];
+const srt=[...all].sort((a,b)=>b.s-a.s),tip=ws===null?'Add a food above to start your week.':junk>=3?'Swap one packaged item a day with a wholefood such as fruit, curd or roasted chana.':junk>0?'Close. Cut the red items and your score climbs.':'Great choices. Keep it going.';
+const bar=(n,val,lim,u,over)=>{const r=val/lim,c=over?(r>1?'bad':r>.8?'warn':'ok'):(r>=1?'ok':r>=.6?'warn':'bad');return `<div class="mb"><b>${n}</b> ${val.toFixed(0)}${u} <small>of ${lim.toFixed(0)}${u} ${over?'limit':'goal'}</small><div class="gauge"><i style="width:${Math.min(100,r*100)}%;background:var(--${c})"></i></div></div>`};
+const td=(L[dk(now)]||[]);
+tout.innerHTML=`<div class="card"><div class="wsc"><div class="big ${v[2]}">${ws===null?'–':(ws/10).toFixed(1)}</div><div><b>${v[0]} ${v[1]}</b><br><small>Weekly score out of 10 · ${lg.length}/7 days logged · ${good} good days · ${junk} junk items</small></div></div>
+<div class="wk">${days.map(d=>`<div class="wd${d.t?' td':''}"><div class="wb"><i style="height:${d.a===null?0:Math.max(6,d.a)}%;background:var(--${d.a>=70?'ok':d.a>=45?'warn':'bad'})"></i></div><small>${d.l}</small><b>${d.a===null?'–':(d.a/10).toFixed(1)}</b></div>`).join('')}</div>
+<small>Score = ingredient quality ${qa===null?'–':(qa/10).toFixed(1)} and nutrient balance ${na===null?'–':(na/10).toFixed(1)}, averaged. Nutrient balance checks sugar (50 g limit), fat (65 g limit) and protein share of energy (10% minimum).</small><p><small>${tip}</small></p>${all.length>1?`<small>🥇 Best pick: ${esc(srt[0].n)} (${(srt[0].s/10).toFixed(1)}) · ⚠️ Worst pick: ${esc(srt[srt.length-1].n)} (${(srt[srt.length-1].s/10).toFixed(1)})</small>`:''}</div>
+<div class="card"><b>Today’s fat, sugar and protein</b>${bar('Fat',TD.f,65,' g',1)}${bar('Sugar',TD.su,50,' g',1)}${bar('Protein',TD.p,tp,' g',0)}<small>Protein goal is 1 g per kg of your weight (${tp} kg). Limits: WHO sugar under 10% of energy, fat about 30% of a 2,000 kcal diet.</small></div>
+<div class="card"><b>Calorie split analysis</b><div class="pies">${pie(TD,'Today')}${pie(WT,'This week')}</div>${ND?`<p><small>Daily average this week: ${Math.round(WT.kc/ND)} kcal · fat ${(WT.f/ND).toFixed(0)} g · sugar ${(WT.su/ND).toFixed(0)} g · protein ${(WT.p/ND).toFixed(0)} g</small></p>`:''}<small>Nutrition values are approximate, for typical serving sizes. Scanned or pasted foods add to the quality score only, with no nutrition data.</small></div>
+<div class="card"><b>Today</b>${td.length?`<div class="scroll"><table><tr><th>Meal</th><th>Food</th><th>Mark</th><th>Fat</th><th>Sugar</th><th>Protein</th><th></th></tr>${td.map((x,i)=>`<tr><td>${esc(x.m)}</td><td>${esc(x.n)}<br><small>${x.sv?x.q+' × '+esc(x.sv):''}</small></td><td class="l${x.s>=70?0:x.s>=45?1:2}">${(x.s/10).toFixed(1)}</td><td>${x.kc!=null?x.f.toFixed(0)+' g':'–'}</td><td>${x.kc!=null?x.su.toFixed(0)+' g':'–'}</td><td>${x.kc!=null?x.p.toFixed(0)+' g':'–'}</td><td><button onclick="delT(${i})">✕</button></td></tr>`).join('')}</table></div>`:'<p><small>Nothing logged today.</small></p>'}</div>`}
+c1.value=S.M[1];c2.value=S.K[1];nav();go(0);
+</script></body></html>
